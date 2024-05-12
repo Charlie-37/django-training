@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Recipe Home{% endblock title %}
+
+
+{% block container1 %}
+<h1 class='h1'>Receipes Home</h1>
+<div class="container mt-5">
+    <form class="col-8 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data" >
+        {% csrf_token %}
+        <h3>Add Receipe</h3><hr>
+        <div class="form-group ">
+          <label for="receipe_name" class="form-label">Receipe Name</label>
+          <input type="text" class="form-control" name="receipe_name" id="receipe_name" placeholder="Enter Receipe Name" required>
+        </div>
+        <div class="form-group">
+          <label for="receipe_description" class="form-label">Receipe Description</label>
+          <textarea class="form-control" name="receipe_description" id="receipe_description" placeholder="Receipe Description"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Receipe Image</label>
+            <input type="file" class="form-control" name="receipe_image">
+        </div>
+        <button type="submit" class="btn btn-success">Add Receipe</button>
+      </form>
+</div>
+{% if receipes %}
+<div class="container">
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Receipe Name</th>
+            <th scope="col">Receipe Description</th>
+            <th scope="col">Image</th>
+            <th scope="col">Actions</th>
+
+          </tr>
+        </thead>
+        <tbody>
+            {% for item in receipes %}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td>{{item.receipe_name}}</td>
+            <td>{{item.receipe_description}}</td>
+            <td><img src="/media/{{item.receipe_image}}" style="height:100px; width:200px;"></td>
+            <td>
+                <a href="/vege/delete_receipe/{{item.id}}" class="btn btn-danger">Delete</a>
+                <a href="/vege/update_receipe/{{item.id}}" class="btn btn-success">Update</a>
+            </td>
+          </tr>
+          {% endfor %}
+         
+        </tbody>
+      </table>
+</div>
+{% endif %}
+{% endblock container1 %}
+

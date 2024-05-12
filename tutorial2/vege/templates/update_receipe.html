@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Recipe Home{% endblock title %}
+
+
+{% block container1 %}
+<h1 class='h1'>Receipes Home</h1>
+<div class="container mt-5">
+    <form class="col-8 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data" >
+        {% csrf_token %}
+        <h3>Update Receipe</h3><hr>
+        <div class="form-group ">
+          <label for="receipe_name" class="form-label">Receipe Name</label>
+          <input type="text" class="form-control" value="{{receipe.receipe_name}}"" name="receipe_name" id="receipe_name" placeholder="Enter Receipe Name" required>
+        </div>
+        <div class="form-group">
+          <label for="receipe_description" class="form-label">Receipe Description</label>
+          <textarea class="form-control" name="receipe_description" id="receipe_description" placeholder="Receipe Description">{{receipe.receipe_description}}</textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Receipe Image</label>
+            <input type="file" class="form-control" name="receipe_image">
+        </div>
+        <button type="submit" class="btn btn-success">Update</button>
+      </form>
+
+{% endblock container1 %}
+

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>{% block title %}{% endblock title %}</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+
+    {% comment %}
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/ajax-bootstrap-select/1.4.5/js/ajax-bootstrap-select.min.js"
+      integrity="sha512-HExUHcDgB9r00YwaaDe5z9lTFmTChuW9lDkPEnz+6/I26/mGtwg58OHI324cfqcnejphCl48MHR3SFQzIGXmOA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    {% endcomment %} {% comment %}
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxy/1.6.1/scripts/jquery.ajaxy.min.js" integrity="sha512-bztGAvCE/3+a1Oh0gUro7BHukf6v7zpzrAb3ReWAVrt+bVNNphcl2tDTKCBr5zk7iEDmQ2Bv401fX3jeVXGIcA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    {% endcomment %}
+  </head>
+  <body>
+    <button class="btn btn-primary mt-2 ml-2 mb-2" id="viewdata">View Data</button><br>
+    <table class="table table-striped table-bordered mt-2 ml-2 mb-2 w-75 mx-auto" >
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Department</th>
+            <th scope="col">Email</th>
+            <th scope="col">Age</th>
+            <th scope="col">Address</th>
+          </tr></thead>
+          <tbody id="display_student"></tbody>
+    </table>
+    <script
+      src="https://code.jquery.com/jquery-3.6.3.min.js"
+      integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      type="text/js"
+    ></script>
+    <script>
+      $(document).ready(function(){
+          $("#viewdata").click(function(){
+              $.ajax({
+                  type: "GET",
+                  url: "{% url 'student_view' %}",
+                  //url: "/vege/student_data",
+                  success: function(response){
+                      console.log(response.dpt)
+                      let head = `<tr>
+                          <th scope="col">ID</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Department</th>
+                          <th scope="col">Email</th>
+                          <th scope="col">Age</th>
+                          <th scope="col">Address</th>
+                        </tr>`
+                      {% comment %} $("#display_student").append(head); {% endcomment %}
+                      console.log(response.student[0])
+                      for(let key in response.student){
+
+                          {% comment %} let temp = "<li>"+response.student[key].student_name+"</li>" {% endcomment %}
+                          let dpt_name = response.dpt[response.student[key].department_id-1].department
+                          //let dpt_name = response.student[key].department_id
+
+                          let temp = "<tr>"+
+                              "<td>"+key+"</td>"+
+                              "<td>"+response.student[key].student_name+"</td>"+
+                              "<td>"+dpt_name+"</td>"+
+                              "<td>"+response.student[key].student_email+"</td>"+
+                              "<td>"+response.student[key].student_age+"</td>"+
+                              "<td>"+response.student[key].student_address+"</td>"+
+
+                            "</tr>"
+
+                          $("#display_student").append(temp)
+                      }
+                  },
+                  error: function(response){
+                      console.log("no data")
+                  }
+
+              });
+          });
+      });
+    </script>
+  </body>
+</html>

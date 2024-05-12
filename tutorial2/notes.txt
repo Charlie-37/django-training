@@ -1,0 +1,203 @@
+1. wsgi(web server gateway interface): default use by django for only http requests(GPUD)
+2. asgi(async server gateway interface): used for both http request and web sockets(two way connections)
+   
+3. python manage.py runserver 0.0.0.0.5000: to run on other port
+4. Context: a dictionary to send data from backend to frontend.
+
+5. Jinja
+ For loop Counter: {{forloop.counter}}
+    To delete cell: <td><a href="/vege/delete_receipe/{{item.id}}" class="btn btn-danger">Delete</a></td>
+
+6. Django shell practice:
+
+ from home.models import *   
+    >>> fruits.objects.all() 
+    <QuerySet [<fruits: orange>, <fruits: mango>, <fruits: Apple>]>
+    >>> fruits.objects.all()    
+    <QuerySet [<fruits: orange>, <fruits: mango>, <fruits: Apple>]>
+    >>> fruits.objects.create(fruit_name="Banana",price=400,manufacture_date="2024-01-21",fruit_descriptions="Banana is yellow") 
+    <fruits: Banana>
+    >>> fruits.objects.all()        
+    <QuerySet [<fruits: orange>, <fruits: mango>, <fruits: Banana>, <fruits: Apple>]>
+
+    x = student(name = "Sunil", age=25, email="sunilbhave45@gmail.com",address="badlapur") 
+    >>> x.save() 
+
+    >>> std = student.objects.create(name="prasad",age=34,email="prasad223@gmail.com", address="nashik")
+
+    >>> student.objects.all()
+    <QuerySet [<student: student object (1)>, <student: student object (2)>]>  
+
+    >>> student.objects.all()[0].name
+    'Sunil'
+    >>> student.objects.all()[1].name 
+    'prasad'
+
+    >>> car_dict = {"car_name":"baleno","speed":120} 
+    >>> car.objects.create(**car_dict) 
+    <car: car object (3)>
+
+    >>> car.objects.filter(id=2) 
+    <QuerySet [<car: brezza>]>
+
+    # Update query :
+    >>> car_val = car.objects.get(id=1)    
+    >>> car_val.car_name = "creta"
+    >>> car_val.speed = 180
+    >>> car_val.save()
+
+    >>> car.objects.filter(id=1).update(car_name="Creta Dark")        
+    1
+    >>> car.objects.all() 
+    <QuerySet [<car: Creta Dark>, <car: brezza>, <car: baleno>]>
+
+    # Delete Query
+    >>> car.objects.get(car_name="Creta Dark").delete() 
+    (1, {'home.car': 1})
+    >>> car.objects.all()                               
+    <QuerySet [<car: brezza>, <car: baleno>]>
+
+    # To get Column name
+    field_names = [f.name for f in User._meta.get_fields()]
+
+    # Order by
+    x = Receipe.objects.all().order_by('receipe_view_count') 
+    >>> x
+
+    # Order by with Limit
+    >>> x = Receipe.objects.all().order_by('receipe_view_count')[0:2] 
+    >>> x
+    <QuerySet [<Receipe: Receipe object (23)>, <Receipe: Receipe object (24)>]>
+
+    # Query to filter with greater(__gte) and lesser(__lte) than respectively:
+    >>> x = Receipe.objects.filter(receipe_view_count__gte = 55)  
+    >>> x = Receipe.objects.filter(receipe_view_count__lte = 55)  
+
+    # __icontains 
+    >>> qs = Student.objects.filter(student_name__icontains = 'A') 
+    >>> qs
+    <QuerySet [<Student: Allison Cook>, <Student: Alyssa Phillips>, <Student: Amy Lucero>, 
+    <Student: Antonio Collins>, <Student: Brady Johnson>, 
+    <Student: Brian Jackson>, <Student: Brian Perry>, 
+    <Student: Carlos Sharp>, <Student: Cassandra Strong>, 
+    <Student: Cheryl Copeland>, <Student: Crystal Smith>, 
+    <Student: Dawn Daugherty>, <Student: Dawn Williams>, 
+    <Student: Dr. Peggy Wagner PhD>, <Student: Jane Hall>, 
+    <Student: Jared Santos>, <Student: Kelly Allison>, <Student: Laura Phillips>, <Student: Lauren Young>, 
+    <Student: Mario Miller>, '...(remaining elements truncated)...']>
+
+    # Raw Query
+    >>> for p in Student.objects.raw("SELECT * from vege_student;"):
+    ...     print(p.student_name)
+    ...
+    sunil
+    rohan
+    Kelly Allison
+    Mr. Michael Smith MD
+    Melissa Gordon
+    Christopher Oneill
+    Cassandra Stron
+
+    >>> from django.db import connection
+    >>> cr = connection.cursor()
+    >>> cr.execute("select student_name,department from vege_student left join vege_department on vege_student.department_id=vege_department.id;")
+    <django.db.backends.sqlite3.base.SQLiteCursorWrapper object at 0x000001F938A0E200>
+    >>> cr.fetchall()
+    [('sunil', 'IT') ('Sierra Mckay', 'extc'), ('Peggy Moses', 'extc')]
+
+    # Foreign key val get
+    >>> qs = Student.objects.filter(department__department='IT')
+    >>> qs
+    <QuerySet [<Student: Amy Lucero>, <Student: Brian Perry>, <Student: Christopher Oneill>, <Student: Jane Hall>, <Student: Kelly Allison>, <Student: Mario Miller>, <Student: Melissa Gordon>, <Student: Randall Jenkins>, <Student: sunil>]>
+    >>>   
+
+    >>> qs = Student.objects.filter(department__department__icontains='I')  
+    >>> qs
+    <QuerySet [<Student: Allison Cook>, <Student: Alyssa Phillips>, <Student: Amy Lucero>, <Student: Antonio Collins>, <Student: Brady Johnson>, <Student: Brian Perry>, <Student: Chelsey Brown>, <Student: Cheryl Copeland>, <Student: Cheryl Smith>, <Student: Christopher Bender>, <Student: Christopher Oneill>, <Student: Crystal Smith>, <Student: Dawn Daugherty>, <Student: Dawn Williams>, <Student: Jane Hall>, <Student: Kelly Allison>, <Student: Laura Phillips>, <Student: Mario Miller>, <Student: Melissa Gordon>, <Student: Michael Foster>, '...(remaining elements truncated)...']>
+    >>>
+
+    >>> d = ['IT','biology']
+    >>> qs = Student.objects.filter(department__department__in=d)          
+    >>> qs
+    <QuerySet [<Student: Amy Lucero>, <Student: Brady Johnson>, <Student: Brian Perry>, <Student: Christopher Bender>, <Student: Christopher Oneill>, <Student: Jane Hall>, <Student: Kelly Allison>, <Student: Laura Phillips>, <Student: Mario Miller>, <Student: Melissa Gordon>, <Student: Randall Jenkins>, <Student: Susan Smith>, <Student: Taylor Wells>, <Student: Veronica Kennedy>, <Student: sunil>]>
+
+7. Form: when we add image field in HTML Form
+<form class="col-6 mx-auto card p-3 shadow-lg" method="post"[enctype="multipart/formdata"]>
+{% csrf_token %}
+
+
+
+8. URL Routing
+1. /.... : if we add /prefix the url will start from home other wise it will continue from ongoing url.
+
+9. Static file settings
+
+    # settings.py file
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+
+    STATICFILES_DIR = {os.path.join(BASE_DIR,'public','static')}
+
+    MEDIA_ROOT = os.path.join(BASE_DIR,'public','static')
+    MEDIA_URL = '/media/'
+
+    # urls.py (main)
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    from django.conf import settings
+    from django.conf.urls.static import static
+
+    urlpatterns = [
+        path('vege/', include('vege.urls')),
+    ]
+
+    if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    urlpatterns += staticfiles_urlpatterns()
+
+10. Setting Encrypt password in User models:
+    from django.contrib.auth.models import User
+
+    user = User.objects.create(first_name = first_name,last_name = last_name,username = username)
+    user.set_password(password)
+    user.save()
+
+11. To decrypt password:
+    from django.contrib.auth import authenticate, login, logout
+
+    user = authenticate(username=username, password=password)
+        if user is None:
+            messages.info(request,'Wrong Username & Password')
+            return redirect('/vege/login')
+        else:
+            login(request,user)
+            return redirect('/vege/add_receipes')
+
+12. To print alert message:
+    # Views
+    from django.contrib import messages
+    messages.info(request,'Username already taken')
+    return redirect('/vege/register')
+
+    # html
+        {% csrf_token %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-success" role="alert">
+            {{message}}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+13. Session logout:
+    def logout_page(request):
+        logout(request)
+        return redirect('/vege/login')
+
+14. Login Required:
+        from django.contrib.auth.decorators import login_required
+
+        @login_required(login_url='/vege/login')
+        def delete_receipe(request,id):
+            return redirect('/vege/add_receipes/')
+
