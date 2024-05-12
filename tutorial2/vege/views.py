@@ -94,4 +94,4 @@ def student_view_page(request):
     # print(list(std.values()))
     print(list(dpt.values()))
     
-    return JsonResponse({"student":list(std.values()),"dpt":list(dpt.values())})
+    return JsonResponse({"student":list(std.values()),"dpt":dict(dpt.values())})
